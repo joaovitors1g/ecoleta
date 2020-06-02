@@ -18,7 +18,8 @@ class PointsController {
 
     const [point] = await trx('points')
       .insert({
-        image: 'image-fake',
+        image:
+          'https://images.unsplash.com/photo-1578916171728-46686eac8d58?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
         name,
         email,
         whatsapp,
@@ -35,6 +36,8 @@ class PointsController {
     }));
 
     await trx('point_items').insert(pointItems);
+
+    await trx.commit();
 
     return res.status(201).json(point);
   }
@@ -57,6 +60,26 @@ class PointsController {
       point,
       items,
     });
+  }
+
+  async index(req: Request, res: Response) {
+    const { uf, city, items } = req.query;
+
+    const parsedItems = String(items)
+      .split(/,\s?/)
+      .map((item) => Number(item));
+
+    console.log();
+
+    const points = await knex('points')
+      .join('point_items', 'points.id', '=', 'point_items.point_id')
+      .whereIn('point_items.item_id', parsedItems)
+      .whereRaw('LOWER(city) = LOWER(?)', [String(city)])
+      .where('uf', String(uf))
+      .distinct()
+      .select('points.*');
+
+    return res.json(points);
   }
 }
 

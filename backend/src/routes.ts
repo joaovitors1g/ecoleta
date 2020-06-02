@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/items', ItemsController.index);
 
 router.post('/points', PointsController.create);
+router.get('/points', PointsController.index);
 router.get('/points/:id', PointsController.show);
 
 export default router;
