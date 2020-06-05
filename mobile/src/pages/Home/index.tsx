@@ -11,6 +11,7 @@ import RNPickerSelect, { Item } from 'react-native-picker-select';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
+import * as SplashScreen from 'expo-splash-screen';
 import axios from 'axios';
 
 interface IBGEUfResponse {
@@ -28,6 +29,7 @@ function Icon() {
 }
 
 function Home() {
+  const [isReady, setIsReady] = useState(false);
   const [ufs, setUfs] = useState<Item[]>([]);
   const [ufCities, setUfCities] = useState<Item[]>([]);
   const [selectedUf, setSelectedUf] = useState(null);
@@ -61,9 +63,17 @@ function Home() {
         value: uf.sigla,
       }));
       setUfs(ufInitials);
+      setIsReady(true);
+      SplashScreen.hideAsync();
     }
     loadUfs();
   }, []);
+
+  useEffect(() => {
+    if (selectedCity === null && selectedUf) {
+      setSelectedUf(null);
+    }
+  }, [selectedCity]);
 
   useEffect(() => {
     async function loadUfCities() {
@@ -81,6 +91,37 @@ function Home() {
     }
     loadUfCities();
   }, [selectedUf]);
+
+  if (!isReady) {
+    return (
+      <ImageBackground
+        source={require('../../../assets/splash.png')}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        resizeMode='contain'
+      >
+        <Text
+          style={{
+            marginTop: 100,
+            fontFamily: 'Roboto_400Regular',
+            fontSize: 14,
+            color: '#6C6C80',
+          }}
+        >
+          Carregando App...
+        </Text>
+      </ImageBackground>
+    );
+  }
+
+  function getOpacityForSelect(value: any) {
+    return {
+      opacity: value ? 1 : 0.5,
+    };
+  }
 
   return (
     <ImageBackground
@@ -124,7 +165,10 @@ function Home() {
           onValueChange={(value) => setSelectedCity(value)}
           items={ufCities}
           style={{
-            inputAndroid: styles.input,
+            inputAndroid: {
+              ...styles.input,
+              ...getOpacityForSelect(selectedUf),
+            },
             iconContainer: {
               top: 20,
               right: 20,
@@ -135,6 +179,7 @@ function Home() {
           placeholder={{
             label: 'Selecione a cidade',
           }}
+          disabled={!selectedUf}
         />
         <RectButton style={styles.button} onPress={handleNavigateToPoints}>
           <View style={styles.buttonIcon}>
