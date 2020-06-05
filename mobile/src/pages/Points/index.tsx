@@ -9,11 +9,12 @@ import {
   Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 import { SvgUri } from 'react-native-svg';
+import Emoji from 'react-native-emoji';
 
 import api from '../../services/api';
 
@@ -31,6 +32,11 @@ interface Point {
   longitude: number;
 }
 
+interface Params {
+  uf: string;
+  city: string;
+}
+
 export default function Points() {
   const [items, setItems] = useState<Item[]>([]);
   const [points, setPoints] = useState<Point[]>([]);
@@ -40,7 +46,8 @@ export default function Points() {
   ]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const navigation = useNavigation();
-
+  const route = useRoute();
+  const { city, uf } = route.params as Params;
   useEffect(() => {
     async function loadItems() {
       const response = await api.get('/items');
@@ -60,30 +67,49 @@ export default function Points() {
         return;
       }
 
-      const location = await Location.getCurrentPositionAsync({
-        enableHighAccuracy: true,
-      });
+      try {
+        const location = await Location.getCurrentPositionAsync({
+          enableHighAccuracy: true,
+          mayShowUserSettingsDialog: true,
+        });
 
-      const { latitude, longitude } = location.coords;
+        const { latitude, longitude } = location.coords;
 
-      setInitialPosition([latitude, longitude]);
+        setInitialPosition([latitude, longitude]);
+      } catch (error) {
+        Alert.alert(
+          'Ooops...',
+          'Não conseguimos detectar seu local, por favor especifique manualmente no mapa'
+        );
+      }
     }
     loadUserPosition();
   }, []);
 
   useEffect(() => {
     async function loadPoints() {
-      const response = await api.get('/points', {
-        params: {
-          city: 'Ibiporã',
-          uf: 'PR',
-          items: [1, 2],
-        },
-      });
-      setPoints(response.data);
+      if (selectedItems.length === 0) {
+        setPoints([]);
+        return;
+      }
+      try {
+        const response = await api.get('/points', {
+          params: {
+            city,
+            uf,
+            items: selectedItems,
+          },
+        });
+        setPoints(response.data);
+      } catch (err) {
+        Alert.alert(
+          'Ooops...',
+          `Parece que tem algo de errado com a API: ${err.response.statusCode}`
+        );
+      }
     }
     loadPoints();
-  }, []);
+  }, [selectedItems]);
 
   function handleNavigateBack() {
     navigation.goBack();
@@ -111,7 +137,16 @@ export default function Points() {
         <TouchableOpacity onPress={handleNavigateBack}>
           <Feather name='arrow-left' size={20} color='#34cb79' />
         </TouchableOpacity>
-        <Text style={styles.title}>Bem-vindo.</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 24,
+          }}
+        >
+          <Emoji name='grinning' style={{ fontSize: 20, marginRight: 10 }} />
+          <Text style={styles.title}>Bem-vindo.</Text>
+        </View>
         <Text style={styles.description}>
           Encontre no mapa um ponto de coleta.
         </Text>
@@ -191,7 +226,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontFamily: 'Ubuntu_700Bold',
-    marginTop: 24,
   },
 
   description: {
