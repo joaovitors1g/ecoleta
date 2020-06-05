@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     height: 70,
     backgroundColor: '#34CB79',
     flexDirection: 'column',
-    borderRadius: 8,
+    borderRadius: 4,
     overflow: 'hidden',
     alignItems: 'center',
   },
