@@ -184,6 +184,7 @@ export default function Points() {
                       {point.name}
                     </Text>
                   </View>
+                  <View style={styles.mapMarkerPositionArrow} />
                 </Marker>
               ))}
             </MapView>
@@ -278,6 +279,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingHorizontal: 5,
     paddingTop: 3,
+  },
+
+  mapMarkerPositionArrow: {
+    backgroundColor: 'transparent',
+    borderTopWidth: 10,
+    borderTopColor: '#34CB79',
+    borderRightWidth: 10,
+    borderRightColor: 'transparent',
+    borderLeftWidth: 10,
+    borderLeftColor: 'transparent',
+    width: 0,
+    height: 0,
+    marginLeft: 35,
   },
 
   itemsContainer: {
