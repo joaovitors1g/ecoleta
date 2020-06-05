@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
 
   itemsContainer: {
     flexDirection: 'row',
-    marginTop: 16,
+    marginTop: 24,
     marginBottom: 32,
   },
 
