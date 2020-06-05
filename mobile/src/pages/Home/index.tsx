@@ -1,14 +1,86 @@
-import React from 'react';
-import { View, ImageBackground, Image, StyleSheet, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  ImageBackground,
+  Image,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+} from 'react-native';
+import RNPickerSelect, { Item } from 'react-native-picker-select';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
+import axios from 'axios';
+
+interface IBGEUfResponse {
+  sigla: string;
+}
+
+interface IBGEUfCitiesResponse {
+  nome: string;
+}
+
+function Icon() {
+  return (
+    <Feather name='chevron-down' color='rgba(160, 160, 178, 0.5)' size={20} />
+  );
+}
+
 function Home() {
+  const [ufs, setUfs] = useState<Item[]>([]);
+  const [ufCities, setUfCities] = useState<Item[]>([]);
+  const [selectedUf, setSelectedUf] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
   const navigation = useNavigation();
 
   function handleNavigateToPoints() {
-    navigation.navigate('Points');
+    if (!selectedUf || !selectedCity) {
+      ToastAndroid.showWithGravity(
+        'Você precisa selecionar um estado e uma cidade!',
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER
+      );
+      return;
+    }
+
+    navigation.navigate('Points', {
+      uf: selectedUf,
+      city: selectedCity,
+    });
   }
+
+  useEffect(() => {
+    async function loadUfs() {
+      const response = await axios.get<IBGEUfResponse[]>(
+        'https://servicodados.ibge.gov.br/api/v1/localidades/estados'
+      );
+      const ufInitials = response.data.map((uf) => ({
+        label: uf.sigla,
+        key: uf.sigla,
+        value: uf.sigla,
+      }));
+      setUfs(ufInitials);
+    }
+    loadUfs();
+  }, []);
+
+  useEffect(() => {
+    async function loadUfCities() {
+      if (selectedUf === null) return;
+      const response = await axios.get<IBGEUfCitiesResponse[]>(
+        `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`
+      );
+
+      const ufCitiesNames = response.data.map((city) => ({
+        label: city.nome,
+        key: city.nome,
+        value: city.nome,
+      }));
+      setUfCities(ufCitiesNames);
+    }
+    loadUfCities();
+  }, [selectedUf]);
 
   return (
     <ImageBackground
@@ -21,13 +93,49 @@ function Home() {
     >
       <View style={styles.main}>
         <Image source={require('../../assets/logo.png')} />
-        <Text style={styles.title}>Seu marketplace de coleta de resíduos</Text>
-        <Text style={styles.description}>
-          Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente.
-        </Text>
+        <View>
+          <Text style={styles.title}>
+            Seu marketplace de coleta de resíduos
+          </Text>
+          <Text style={styles.description}>
+            Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente.
+          </Text>
+        </View>
       </View>
 
       <View style={styles.footer}>
+        <RNPickerSelect
+          onValueChange={(value) => setSelectedUf(value)}
+          items={ufs}
+          style={{
+            inputAndroid: styles.input,
+            iconContainer: {
+              top: 20,
+              right: 20,
+            },
+          }}
+          useNativeAndroidPickerStyle={false}
+          Icon={Icon}
+          placeholder={{
+            label: 'Selecione o estado',
+          }}
+        />
+        <RNPickerSelect
+          onValueChange={(value) => setSelectedCity(value)}
+          items={ufCities}
+          style={{
+            inputAndroid: styles.input,
+            iconContainer: {
+              top: 20,
+              right: 20,
+            },
+          }}
+          useNativeAndroidPickerStyle={false}
+          Icon={Icon}
+          placeholder={{
+            label: 'Selecione a cidade',
+          }}
+        />
         <RectButton style={styles.button} onPress={handleNavigateToPoints}>
           <View style={styles.buttonIcon}>
             <Feather name='arrow-right' color='#fff' size={24} />
@@ -75,6 +183,7 @@ const styles = StyleSheet.create({
   input: {
     height: 60,
     backgroundColor: '#FFF',
+    color: 'black',
     borderRadius: 10,
     marginBottom: 8,
     paddingHorizontal: 24,
