@@ -180,7 +180,9 @@ export default function Points() {
                         uri: point.image,
                       }}
                     />
-                    <Text style={styles.mapMarkerTitle}>{point.name}</Text>
+                    <Text style={styles.mapMarkerTitle} numberOfLines={1}>
+                      {point.name}
+                    </Text>
                   </View>
                 </Marker>
               ))}
@@ -274,7 +276,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto_400Regular',
     color: '#FFF',
     fontSize: 13,
-    lineHeight: 23,
+    paddingHorizontal: 5,
+    paddingTop: 3,
   },
 
   itemsContainer: {
