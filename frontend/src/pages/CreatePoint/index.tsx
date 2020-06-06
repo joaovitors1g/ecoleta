@@ -42,6 +42,7 @@ function CreatePoint() {
   const [selectedCity, setSelectedCity] = useState('0');
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<LatLon>([0, 0]);
+  const [selectedFile, setSelectedFile] = useState<File>();
   const [userPosition, setUserPosition] = useState<LatLon>([
     -5.090944,
     -51.94335,
@@ -126,16 +127,22 @@ function CreatePoint() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const data = {
-      ...formData,
-      latitude: selectedPosition[0],
-      longitude: selectedPosition[1],
-      city: selectedCity,
-      uf: selectedUf,
-      items: selectedItems,
-    };
+    const fd = new FormData();
 
-    await api.post('/points', data);
+    fd.append('name', formData.name);
+    fd.append('email', formData.email);
+    fd.append('whatsapp', formData.whatsapp);
+    fd.append('latitude', String(selectedPosition[0]));
+    fd.append('longitude', String(selectedPosition[1]));
+    fd.append('city', selectedCity);
+    fd.append('uf', selectedUf);
+    fd.append('items', selectedItems.join(', '));
+
+    if (selectedFile) {
+      fd.append('image', selectedFile);
+    }
+
+    await api.post('/points', fd);
 
     history.push('/');
   }
@@ -156,7 +163,7 @@ function CreatePoint() {
           ponto de coleta
         </h1>
 
-        <Dropzone />
+        <Dropzone onFileUploaded={setSelectedFile} />
 
         <fieldset>
           <legend>
