@@ -71,7 +71,7 @@ Para executar essa aplicação você precisará das seguintes ferramentas
 
 ```bash
 # Clone esse repositório
-$ git clone https://github.com/joaovitors1g/Ecoleta
+$ git clone https://github.com/joaovitors1g/ecoleta
 
 # Acesse a pasta recem criada
 $ cd Ecoleta
