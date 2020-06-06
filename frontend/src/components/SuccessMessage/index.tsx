@@ -12,7 +12,7 @@ export default function SuccessMessage({ showSuccess }: Props) {
     return (
       <div className='bg-black'>
         <FiCheckCircle color='#34CB79' size={38} />
-        <p className='success-text'>Cadastro concluído.</p>
+        <p className='success-text'>Cadastro concluído!</p>
       </div>
     );
   } else {
