@@ -18,8 +18,7 @@ class PointsController {
 
     const [point] = await trx('points')
       .insert({
-        image:
-          'https://images.unsplash.com/photo-1578916171728-46686eac8d58?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
+        image: req.file.filename,
         name,
         email,
         whatsapp,
@@ -30,10 +29,13 @@ class PointsController {
       })
       .returning('*');
 
-    const pointItems = items.map((item_id: string) => ({
-      item_id,
-      point_id: point.id,
-    }));
+    const pointItems = items
+      .split(/,\s?/)
+      .map((item_id: string) => Number(item_id))
+      .map((item_id: number) => ({
+        item_id,
+        point_id: point.id,
+      }));
 
     await trx('point_items').insert(pointItems);
 
@@ -55,6 +57,8 @@ class PointsController {
       .join('point_items', 'items.id', '=', 'point_items.item_id')
       .where('point_items.point_id', id)
       .select('items.title');
+
+    point.image_url = `${process.env.API_URL}/uploads/${point.image}`;
 
     return res.json({
       point,
@@ -78,7 +82,12 @@ class PointsController {
         .distinct()
         .select('points.*');
 
-      return res.json(points);
+      const serializedPoints = points.map((point) => ({
+        ...point,
+        image_url: `${process.env.API_URL}/uploads/${point.image}`,
+      }));
+
+      return res.json(serializedPoints);
     } catch (error) {
       return res.status(500).json([]);
     }
