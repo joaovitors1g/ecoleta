@@ -7,6 +7,7 @@ import { LeafletMouseEvent } from 'leaflet';
 import './styles.css';
 
 import Dropzone from '../../components/Dropzone';
+import SuccessMessage from '../../components/SuccessMessage';
 
 import logo from '../../assets/logo.svg';
 
@@ -52,6 +53,7 @@ function CreatePoint() {
     email: '',
     whatsapp: '',
   });
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const history = useHistory();
 
@@ -144,135 +146,140 @@ function CreatePoint() {
 
     await api.post('/points', fd);
 
-    history.push('/');
+    setShowSuccess(true);
+
+    setTimeout(() => history.push('/'), 3000);
   }
 
   return (
-    <div id='page-create-point'>
-      <header>
-        <img src={logo} alt='Ecoleta' />
-        <Link to='/'>
-          <FiArrowLeft />
-          Voltar para home
-        </Link>
-      </header>
+    <>
+      <SuccessMessage showSuccess={showSuccess} />
+      <div id='page-create-point'>
+        <header>
+          <img src={logo} alt='Ecoleta' />
+          <Link to='/'>
+            <FiArrowLeft />
+            Voltar para home
+          </Link>
+        </header>
 
-      <form onSubmit={handleSubmit}>
-        <h1>
-          Cadastro do <br />
-          ponto de coleta
-        </h1>
+        <form onSubmit={handleSubmit}>
+          <h1>
+            Cadastro do <br />
+            ponto de coleta
+          </h1>
 
-        <Dropzone onFileUploaded={setSelectedFile} />
+          <Dropzone onFileUploaded={setSelectedFile} />
 
-        <fieldset>
-          <legend>
-            <h2>Dados</h2>
-          </legend>
+          <fieldset>
+            <legend>
+              <h2>Dados</h2>
+            </legend>
 
-          <div className='field'>
-            <label htmlFor='name'>Nome da entidade</label>
-            <input
-              type='text'
-              name='name'
-              id='name'
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className='field-group'>
             <div className='field'>
-              <label htmlFor='email'>E-mail</label>
+              <label htmlFor='name'>Nome da entidade</label>
               <input
                 type='text'
-                name='email'
-                id='email'
+                name='name'
+                id='name'
                 onChange={handleInputChange}
               />
             </div>
-            <div className='field'>
-              <label htmlFor='whatsapp'>Whatsapp</label>
-              <input
-                type='text'
-                name='whatsapp'
-                id='whatsapp'
-                onChange={handleInputChange}
+            <div className='field-group'>
+              <div className='field'>
+                <label htmlFor='email'>E-mail</label>
+                <input
+                  type='text'
+                  name='email'
+                  id='email'
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className='field'>
+                <label htmlFor='whatsapp'>Whatsapp</label>
+                <input
+                  type='text'
+                  name='whatsapp'
+                  id='whatsapp'
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>
+              <h2>Endereço</h2>
+              <span>Selecione o endereço no mapa</span>
+            </legend>
+
+            <Map center={userPosition} zoom={13} onClick={handleMapClick}>
+              <TileLayer
+                attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
               />
-            </div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>
-            <h2>Endereço</h2>
-            <span>Selecione o endereço no mapa</span>
-          </legend>
+              <Marker position={selectedPosition}>
+                <Popup>
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            </Map>
 
-          <Map center={userPosition} zoom={13} onClick={handleMapClick}>
-            <TileLayer
-              attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-              url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            />
-            <Marker position={selectedPosition}>
-              <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-              </Popup>
-            </Marker>
-          </Map>
-
-          <div className='field-group'>
-            <div className='field'>
-              <label htmlFor='uf'>Estado (UF)</label>
-              <select
-                name='uf'
-                id='uf'
-                onChange={(e) => setSelectedUf(e.target.value)}
-                value={selectedUf}
-              >
-                <option value='0'>Selecione uma UF</option>
-                {ufs.map((uf) => (
-                  <option key={uf} value={uf}>
-                    {uf}
-                  </option>
-                ))}
-              </select>
+            <div className='field-group'>
+              <div className='field'>
+                <label htmlFor='uf'>Estado (UF)</label>
+                <select
+                  name='uf'
+                  id='uf'
+                  onChange={(e) => setSelectedUf(e.target.value)}
+                  value={selectedUf}
+                >
+                  <option value='0'>Selecione uma UF</option>
+                  {ufs.map((uf) => (
+                    <option key={uf} value={uf}>
+                      {uf}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className='field'>
+                <label htmlFor='city'>Cidade</label>
+                <select
+                  name='city'
+                  id='city'
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  value={selectedCity}
+                >
+                  <option value='0'>Selecione uma Cidade</option>
+                  {ufCities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className='field'>
-              <label htmlFor='city'>Cidade</label>
-              <select
-                name='city'
-                id='city'
-                onChange={(e) => setSelectedCity(e.target.value)}
-                value={selectedCity}
-              >
-                <option value='0'>Selecione uma Cidade</option>
-                {ufCities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>
-            <h2>Ítens de coleta</h2>
-          </legend>
-          <ul className='items-grid'>
-            {items.map((item) => (
-              <li
-                key={item.id}
-                className={selectedItems.includes(item.id) ? 'selected' : ''}
-                onClick={() => handleSelectItem(item.id)}
-              >
-                <img src={item.image_url} alt={item.title} />
-                <span>{item.title}</span>
-              </li>
-            ))}
-          </ul>
-        </fieldset>
-        <button type='submit'>Cadastrar ponto de coleta</button>
-      </form>
-    </div>
+          </fieldset>
+          <fieldset>
+            <legend>
+              <h2>Ítens de coleta</h2>
+            </legend>
+            <ul className='items-grid'>
+              {items.map((item) => (
+                <li
+                  key={item.id}
+                  className={selectedItems.includes(item.id) ? 'selected' : ''}
+                  onClick={() => handleSelectItem(item.id)}
+                >
+                  <img src={item.image_url} alt={item.title} />
+                  <span>{item.title}</span>
+                </li>
+              ))}
+            </ul>
+          </fieldset>
+          <button type='submit'>Cadastrar ponto de coleta</button>
+        </form>
+      </div>
+    </>
   );
 }
 

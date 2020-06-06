@@ -1,0 +1,30 @@
+.bg-black {
+  background-color: #0e0a14;
+  position: fixed;
+  height: 100vh;
+  width: calc(100vw - 17px);
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 4000;
+  animation: opacityAnimation forwards ease 350ms;
+}
+
+.success-text {
+  font-weight: bold;
+  color: white;
+  margin-top: 20px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+}
+
+@keyframes opacityAnimation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.9;
+  }
+}
