@@ -1,16 +1,16 @@
 <h1 align="center">
-    <img alt="Next Level Week Ecoleta" src="https://raw.githubusercontent.com/joaovitors1g/Ecoleta/master/.github/capa.png" />
+    <img alt="Next Level Week Ecoleta" src="https://raw.githubusercontent.com/joaovitors1g/ecoleta/master/.github/capa.png" />
     <br>
     <br>
     Ecoleta
 </h1>
 
 <p align="center">
-  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/joaovitors1g/Ecoleta.svg">
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/joaovitors1g/ecoleta.svg">
 
-  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/joaovitors1g/Ecoleta.svg">
+  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/joaovitors1g/ecoleta.svg">
 
-  <img alt="Issues number" src="https://img.shields.io/github/issues/joaovitors1g/Ecoleta">
+  <img alt="Issues number" src="https://img.shields.io/github/issues/joaovitors1g/ecoleta">
 </p>
 
 <p align="center" style="color: #7159c1;">
