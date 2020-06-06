@@ -6,6 +6,8 @@ import axios from 'axios';
 import { LeafletMouseEvent } from 'leaflet';
 import './styles.css';
 
+import Dropzone from '../../components/Dropzone';
+
 import logo from '../../assets/logo.svg';
 
 import api from '../../services/api';
@@ -153,6 +155,9 @@ function CreatePoint() {
           Cadastro do <br />
           ponto de coleta
         </h1>
+
+        <Dropzone />
+
         <fieldset>
           <legend>
             <h2>Dados</h2>
