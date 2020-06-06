@@ -36,6 +36,7 @@ Nesse projeto foram utilizadas as seguintes tecnologias:
 
 ### Frontend
 
+- [Typescript](https://www.typescriptlang.org/)
 - [ReactJS](https://reactjs.org/)
 - [Axios](https://github.com/axios/axios)
 - [React-Icons](https://react-icons.netlify.com/)
@@ -47,6 +48,7 @@ Nesse projeto foram utilizadas as seguintes tecnologias:
 
 ### Mobile
 
+- [Typescript](https://www.typescriptlang.org/)
 - [Expo](https://expo.io)
 - [React-Native](https://reactnative.dev/)
 - [Expo-Constants](https://docs.expo.io/versions/latest/sdk/constants/)
