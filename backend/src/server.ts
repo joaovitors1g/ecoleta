@@ -4,6 +4,7 @@ configEnv();
 
 import express from 'express';
 import cors from 'cors';
+import { errors } from 'celebrate';
 
 import routes from './routes';
 import path from 'path';
@@ -15,6 +16,8 @@ app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 app.use(express.json());
 
 app.use(cors());
+
+app.use(errors());
 
 app.use(routes);
 
