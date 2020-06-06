@@ -10,7 +10,7 @@ class ItemsController {
     const serializedItems = items.map((item) => ({
       id: item.id,
       title: item.title,
-      image_url: `${API_URL}/uploads/${item.image}`,
+      image_url: `${API_URL}/assets/${item.image}`,
     }));
 
     return res.json(serializedItems);
